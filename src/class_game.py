@@ -40,18 +40,14 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib
 from matplotlib.pyplot import imshow
 from matplotlib.colors import ListedColormap
 from matplotlib.colors import LinearSegmentedColormap
-#from package.CLASS_gui import GUI
-#from src.class_board import Board
 from class_board import Board
-#from src.class_agent import Agent
 from class_agent import Agent
-#from src.main import *
-from main import ENERGYCOSTS_MOVEMENT, ENERGYCOSTS_REPRODUCTION, START_ENERGY
-from main import WIDTH, HEIGHT, NUMBER_AGENTS, ROUNDS, FOOD_PERCENTAGE_BEGINNING,ADDITIONAL_FOOD_PERCENTAGE, SICKNESS_DURATION, VIGILANT_RADIUS
-import main
+from main import *
+
 class Game:
     """
     class to run the simulation allowing it to be modelled across multiple "worlds"\n
@@ -100,7 +96,7 @@ class Game:
         self.saving = saving
         self.worlds = worlds
         self.data_list = []
-        self.VISUALIZE_POISON = main.VISUALIZE_POISON
+        self.VISUALIZE_POISON = VISUALIZE_POISON
         self.board = Board(**kwargs)
         self.removed_agents = 0
         #self.gui = GUI(board=self.board)
@@ -122,7 +118,7 @@ class Game:
         -------
         None
         """
-        print(main.VISUALIZE_POISON)
+        print(VISUALIZE_POISON)
         for world in range(self.worlds):  # iterate over the specified number of worlds
             print(f"\n\n----------World {world + 1}------------\n\n")
             AGENTS_COUNTER = NUMBER_AGENTS  # separate counter for each world
@@ -139,7 +135,7 @@ class Game:
 
             for round in range(ROUNDS):
                 print(f"------------Round {round + 1}------------")
-                self.visualize_board(main.VISUALIZE_POISON)
+                self.visualize_board(VISUALIZE_POISON)
                 round_deceased_agents = 0
 
                 # ending the simulation in case there are no agents left
@@ -299,7 +295,7 @@ class Game:
         None
         """
         #5 seconds pause between each time visualizing
-        #time.sleep(2)
+        time.sleep(1)
 
         plt.rcParams["figure.figsize"] = [7.50, 4.50]
         plt.rcParams["figure.autolayout"] = True
@@ -352,15 +348,23 @@ class Game:
         cmap_intelligence = ListedColormap(colors_intelligence)
 
         data1 = self.board.food
-
+        
+        #setting bounds for norming values if needed
+        bounds = [0, 0.5, 1.5,2]
+        
         if VISUALIZE_POISON == True:
-            plot1 = imshow(data1, cmap= cmap_poison, interpolation='nearest', extent=extent)
+            # Erstellen einer Normalisierung, um Werte auf die Grenzen der Colormap abzubilden
+            norm = matplotlib.colors.BoundaryNorm(bounds, cmap_poison.N)
+            #cb1.set_ticks([0, 1, 2])
+            plot1 = imshow(data1, cmap= cmap_poison, interpolation='nearest', extent=extent, norm = norm)
         else:
             plot1 = imshow(data1, cmap= modified_ylgn, interpolation='nearest', extent=extent)
 
         data2 = self.board.world
-        if main.VISUALIZING_INTELLIGENCE == True:
-            plot2 = imshow(data2, cmap_intelligence,alpha = .7, interpolation='nearest', extent=extent)
+        if VISUALIZING_INTELLIGENCE == True:
+            # Erstellen einer Normalisierung, um Werte auf die Grenzen der Colormap abzubilden
+            norm_intel = matplotlib.colors.BoundaryNorm(bounds, cmap_intelligence.N)
+            plot2 = imshow(data2, cmap_intelligence,alpha = .7, interpolation='nearest', extent=extent, norm = norm_intel)
         else:
             plot2 = imshow(data2, cmap="YlOrRd",alpha = .7, interpolation='bilinear', extent=extent)
         
@@ -372,12 +376,13 @@ class Game:
         for spine in plot2.axes.spines.values():
             spine.set_edgecolor("white")
 
-        cb2 = plt.colorbar(plot2)
-        cb1 = plt.colorbar(plot1)
+        
 
         # COLORBAR
+        cb2 = plt.colorbar(plot2)
+        cb1 = plt.colorbar(plot1)
         
-        if main.VISUALIZING_INTELLIGENCE == True:
+        if VISUALIZING_INTELLIGENCE == True:
             cb2.set_label('    no agents    intelligent agents  agressiv agents', color="white")
             cb2.set_ticks([])
         else:
@@ -386,7 +391,7 @@ class Game:
         # set colorbar label plus label color for agents
         if VISUALIZE_POISON == True:
             cb1.set_label('no food          non-poisonous          poisonous', color="white")
-            cb1.set_ticks([])
+            
         else:
             cb1.set_label('food ID', color="white")
         # set colorbar tick color
@@ -415,3 +420,4 @@ class Game:
             print('still some food left')
         else:
             print("no food left")
+        

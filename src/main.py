@@ -34,29 +34,34 @@ ENERGYCOSTS_REPRODUCTION = 5
 START_ENERGY = 50
 WIDTH = 50
 HEIGHT = 50
-NUMBER_AGENTS = 5
-ROUNDS = 10
-FOOD_PERCENTAGE_BEGINNING = 0
+NUMBER_AGENTS = 20
+ROUNDS = 20
+FOOD_PERCENTAGE_BEGINNING = 0.2
 ADDITIONAL_FOOD_PERCENTAGE = 0.001
 SICKNESS_DURATION = ROUNDS // 10
 VIGILANT_RADIUS = 2
 
-VISUALIZE_POISON = False
+VISUALIZE_POISON = True
 VISUALIZING_INTELLIGENCE = True
 
 
 # Global counter for the numbering of living beings EDIT: moved to CLASS_Agent.py
 # agents_counter = NUMBER_AGENTS
-
-FOOD = {
-    1.0: {'Energy': 5, 'consumption_time': 2, 'disease_risk': 0},
-    2.0: {'Energy': 10, 'consumption_time': 6, 'disease_risk': 0},
-    3.0: {'Energy': 15, 'consumption_time': 6, 'disease_risk': 0},
-    4.0: {'Energy': 20, 'consumption_time': 8, 'disease_risk': 0},
-    5.0: {'Energy': 5, 'consumption_time': 2, 'disease_risk': 15},
-    6.0: {'Energy': 10, 'consumption_time': 4, 'disease_risk': 20},
-    7.0: {'Energy': 15, 'consumption_time': 6, 'disease_risk': 30}
-}
+if VISUALIZE_POISON == True:
+    FOOD = {
+        1.0: {'Energy': 10, 'consumption_time': 6, 'disease_risk': 0},
+        2.0: {'Energy': 10, 'consumption_time': 2, 'disease_risk': 10},
+        }
+elif VISUALIZE_POISON == False:
+    FOOD = {
+        1.0: {'Energy': 5, 'consumption_time': 2, 'disease_risk': 0},
+        2.0: {'Energy': 10, 'consumption_time': 6, 'disease_risk': 10},
+        3.0: {'Energy': 15, 'consumption_time': 6, 'disease_risk': 4},
+        4.0: {'Energy': 20, 'consumption_time': 8, 'disease_risk': 0},
+        5.0: {'Energy': 5, 'consumption_time': 2, 'disease_risk': 15},
+        6.0: {'Energy': 10, 'consumption_time': 4, 'disease_risk': 0},
+        7.0: {'Energy': 15, 'consumption_time': 6, 'disease_risk': 0}
+        }
 FOOD_KEYS = list(FOOD.keys())
 
 GENPOOL = {
@@ -79,7 +84,7 @@ def main():
     """
     from class_game import Game     #importing here to avoid circular method-calling
     start = time.time()
-    game = Game(saving=True, worlds=1, ROUNDS=1, VISUALIZE_POISON = VISUALIZE_POISON)
+    game = Game(saving=True, worlds=1, ROUNDS=5, VISUALIZING_INTELLIGENCE=VISUALIZING_INTELLIGENCE, VISUALIZE_POISON=VISUALIZE_POISON)
     game.run()
     script_time = np.round(time.time() - start, 2)
     print(f"Script time: {script_time}s")
@@ -87,13 +92,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""if __name__ == "__main__":
-
-    from package.CLASS_Game import Game     #importing here to avoid circular method-calling
-    start = time.time()
-    #game = Game(saving=True, worlds=1, ROUNDS=5)
-    #game.run()
-    app = paramAd(paramAd.initial_parameters, paramAd.run_simulation)
-    app.mainloop()
-    script_time = np.round(time.time() - start, 2)
-    print(f"Script time: {script_time}s")"""

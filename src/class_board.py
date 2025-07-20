@@ -24,11 +24,7 @@ Authors
 """
 import random
 import numpy as np
-#from src.main import *
-from main import VISUALIZE_POISON, ENERGYCOSTS_MOVEMENT, ENERGYCOSTS_REPRODUCTION, START_ENERGY
-from main import WIDTH, HEIGHT, NUMBER_AGENTS, ROUNDS, FOOD_PERCENTAGE_BEGINNING,ADDITIONAL_FOOD_PERCENTAGE, SICKNESS_DURATION, VIGILANT_RADIUS
-import main
-
+from main import *
 
 
 class Board:
@@ -125,38 +121,38 @@ class Board:
         None
         """
         self.agents_list.append(agents_to_add)
-
     def place_food(self, prozent):
         """
         initially places random food randomly on the board and adds food each round\n
         according to additional_food_percentage
-
+ 
         Parameters
         ----------
         percent : float
-
+ 
         Returns
         -------
         None
         """
-
+ 
         food_placed_this_round = 0
-
+ 
         amount_fields = int(self.width * self.height * prozent)
         for _ in range(amount_fields):
             x, y = random.randint(0, self.width - 1), random.randint(0, self.height - 1)
-            food_key = random.choice(main.FOOD_KEYS)
+            food_key = random.choice(FOOD_KEYS)
             if VISUALIZE_POISON == True:
-                if main.FOOD[food_key]["disease_risk"] == 0:
+                if FOOD[food_key]["disease_risk"] == 0:
                     self.food[x][y] = 1
-                if main.FOOD[food_key]["disease_risk"] > 0:
+                if FOOD[food_key]["disease_risk"] > 0:
                     self.food[x][y] = 2
             else:
                 self.food[x][y] = food_key
                 food_placed_this_round += 1
-
+ 
         print(f"Food placed this round: {food_placed_this_round}")
         self.food_placement_counter += 1
+    
 
     def remove_agents(self, agent):
         """
@@ -186,10 +182,10 @@ class Board:
         ndarray[Any, dtype] | None
         """
         x, y = position
-        if self.food[x, y] != 0:  # Nimmt an, dass 0 bedeutet, dass kein Essen vorhanden ist
+        if self.food[x, y] != 0:  # Assume, that 0 means there have been no food left
             food_key = self.food[x, y]
-            return food_key  # Gibt den Schlüssel des Essens zurück
-        return None  # Kein Essen an dieser Position
+            return food_key  
+        return None  #No more food on this position
 
     def place_agents(self):
         """
@@ -209,10 +205,10 @@ class Board:
 
         for agent in self.agents_list:
             x, y = agent.position
-            if main.VISUALIZING_INTELLIGENCE == True:
+            if VISUALIZING_INTELLIGENCE == True:
                 if agent.genetic['Intelligent'] == True:
                     self.world[x][y] = 1
-                else :
+                elif agent.genetic['Aggressive'] == True:
                     self.world[x][y] = 2
             else:
                 self.world[x][y] += 1
